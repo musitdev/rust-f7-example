@@ -1,9 +1,15 @@
-# rust-blinky
+# rust-f7-example
 
-Implementation of the default blinky microcontroller application. Runs by using
-the [stm32f429x](https://github.com/dkarwowski/stm32f429x) library to
+Implementation of basic example for STM32f7 microcontroller. Runs by using
+the [stm32f7x](https://github.com/musitdev/stm32f7x) and [f7](https://github.com/musitdev/f7) libraries to
 communicate with the peripherals.
 
+## License
+
+Follows an MIT license and Apache dual licence.
+
+
+some command for test
 ./openocd-0.10.0/bin/openocd -f interface/stlink-v2-1.cfg -f target/stm32f7x.cfg
 
 ./openocd-0.10.0/bin/openocd -f interface/stlink-v2.cfg -f target/stm32f7x.cfg -d3  in /usr/share/openocd/openocd/scripts/target
