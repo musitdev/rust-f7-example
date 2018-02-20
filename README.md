@@ -10,6 +10,8 @@ Follows an MIT license and Apache dual licence.
 
 
 some command for test
+build: xargo build --target thumbv7em-none-eabihf
+
 ./openocd-0.10.0/bin/openocd -f interface/stlink-v2-1.cfg -f target/stm32f7x.cfg
 
 ./openocd-0.10.0/bin/openocd -f interface/stlink-v2.cfg -f target/stm32f7x.cfg -d3  in /usr/share/openocd/openocd/scripts/target
