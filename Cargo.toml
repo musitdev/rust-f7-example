@@ -1,6 +1,11 @@
 [package]
-authors = ["David Karwowski <karwowski.david@gmail.com>"]
-name = "blinkyf7"
+authors = ["musitdev <philippe.delrieu@free.fr>"]
+categories = ["embedded", "hardware-support", "no-std"]
+description = "Example for STM32F7xx Hal"
+keywords = ["arm", "cortex-m", "stm32", "hal"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/musitdev/stm32f7x-hal"
+name = "stm32f7x-hal-example"
 version = "0.1.0"
 
 [dependencies]
