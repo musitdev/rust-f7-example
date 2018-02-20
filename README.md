@@ -9,25 +9,21 @@ communicate with the peripherals.
 Follows an MIT license and Apache dual licence.
 
 
-some command for test
-build: xargo build --target thumbv7em-none-eabihf
+To build
+xargo build --target thumbv7em-none-eabihf
+or
+xargo build 
 
+Discovery board, start openocd 0.10.0:
 ./openocd-0.10.0/bin/openocd -f interface/stlink-v2-1.cfg -f target/stm32f7x.cfg
+or
+./openocd-0.10.0/bin/openocd -f interface/stlink-v2-1.cfg -f board/stm32f7discovery.cfg
 
-./openocd-0.10.0/bin/openocd -f interface/stlink-v2.cfg -f target/stm32f7x.cfg -d3  in /usr/share/openocd/openocd/scripts/target
+Start gdb:
+ ../../programs/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb target/thumbv7em-none-eabihf/debug/stm32f7x-hal-example
 
- ../../programs/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb target/thumbv7em-none-eabihf/debug/blinkyf7
-
-.gdbinit
-target remote :3333
-monitor arm semihosting enable
-load
-tbreak cortex_m_rt::reset_handler
-monitor reset halt
-continue
-
-qdb
-tbreak blinkyf7::main
+Some qdb command:
+tbreak stm32f7x-hal-example::main
 continue
 
 break 32

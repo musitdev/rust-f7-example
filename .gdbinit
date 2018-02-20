@@ -4,8 +4,9 @@ monitor arm semihosting enable
 # monitor tpiu config internal itm.fifo uart off 8000000
 # monitor itm port 0 on
 load
-tbreak cortex_m_rt::reset_handler
+#tbreak cortex_m_rt::reset_handler
 monitor reset halt
+break main
 continue
 
 set auto-load safe-path /
