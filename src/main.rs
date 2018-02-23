@@ -12,6 +12,12 @@ extern crate stm32f7x_hal;
 use cortex_m::peripheral::syst::SystClkSource;
 use rtfm::{app, Threshold};
 
+use stm32f7x_hal::flash::FlashExt;
+use stm32f7x_hal::time::U32Ext;
+use embedded_hal::serial::Read;
+use embedded_hal::serial::Write;
+
+use stm32f7x_hal::serial::{Event, Rx, Serial, Tx};
 use stm32f7x_hal::gpio::gpiob::PB7;
 use stm32f7x_hal::gpio::{Output, PushPull};
 use stm32f7x_hal::rcc::RccExt;
@@ -30,7 +36,8 @@ app! {
         // variables
         static ON: bool;
         static PB7: PB7<Output<PushPull>>;
-
+        static RX: Rx<stm32f7x::USART6>;
+        static TX: Tx<stm32f7x::USART6>;
     },
 
     // Here tasks are declared
@@ -46,6 +53,10 @@ app! {
 
             // These are the resources this task has access to.
             resources: [PB7, ON],
+        },
+        USART6: {
+            path: echo,
+            resources: [TX, RX],
         }
     },
 }
@@ -54,6 +65,27 @@ app! {
 fn init(mut p: init::Peripherals)  -> init::LateResources  {
 
     let mut rcc = p.device.RCC.constrain();
+
+    //Serial USART 6 config
+    let mut gpioc = p.device.GPIOC.split(&mut rcc.ahb);
+    //Flash device needed by the RCC cfgr register configuration init. No link with serial use.
+    let mut flash = p.device.FLASH.constrain();
+    let clocks = rcc.cfgr.freeze(&mut flash.acr);
+    let tx = gpioc.pc6.into_af7(&mut gpioc.moder, &mut gpioc.afrl);
+    let rx = gpioc.pc7.into_af7(&mut gpioc.moder, &mut gpioc.afrl);
+
+    let mut serial = Serial::usart6(
+        p.device.USART6,
+        (tx, rx),
+        115_200_u32.bps(),
+        clocks,
+        &mut rcc.apb2,
+    );
+    serial.listen(Event::Rxne);
+    let (tx, rx) = serial.split();
+
+
+    //LED Gpio config.
     let mut gpiob = p.device.GPIOB.split(&mut rcc.ahb);
     //configure GBIOB PIN7 for output
     let pin7: PB7<Output<PushPull>> = gpiob
@@ -70,6 +102,8 @@ fn init(mut p: init::Peripherals)  -> init::LateResources  {
     init::LateResources {
         ON: false,
         PB7: pin7,
+        RX: rx,
+        TX: tx,
     }
 }
 
@@ -77,6 +111,13 @@ fn idle() -> ! {
     loop {
         rtfm::wfi();
     }
+}
+
+// Rx USART6 exeption handle.
+// do serial echo 
+fn echo(_: &mut Threshold, mut r: USART6::Resources) {
+    let byte = r.RX.read().unwrap();
+    r.TX.write(byte).unwrap();
 }
 
 // This is the task handler of the SYS_TICK exception
