@@ -1,13 +1,11 @@
 # rust-f7-example
 
 Implementation of basic example for STM32f7 microcontroller. Runs by using
-the [stm32f7x](https://github.com/musitdev/stm32f7x) and [f7](https://github.com/musitdev/f7) libraries to
-communicate with the peripherals.
+the [stm32f7x](https://github.com/musitdev/stm32f7x) and [stm32f7x-hal-example](https://github.com/musitdev/stm32f7x-hal-example) libraries to communicate with the peripherals.
 
 ## License
 
 Follows an MIT license and Apache dual licence.
-
 
 To build
 xargo build --target thumbv7em-none-eabihf

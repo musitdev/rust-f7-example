@@ -1,4 +1,4 @@
-//! An application with one task
+//! An application with one task led blink and another with serial echo
 #![deny(unsafe_code)]
 #![feature(proc_macro)]
 #![no_std]
