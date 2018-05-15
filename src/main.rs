@@ -4,8 +4,8 @@
 #![no_std]
 
 extern crate cortex_m;
-extern crate embedded_hal;
 extern crate cortex_m_rtfm as rtfm;
+extern crate embedded_hal;
 extern crate stm32f7x;
 extern crate stm32f7x_hal;
 
@@ -23,7 +23,6 @@ use stm32f7x_hal::gpio::{Output, PushPull};
 use stm32f7x_hal::rcc::RccExt;
 use stm32f7x_hal::gpio::GpioExt;
 use embedded_hal::digital::OutputPin;
-
 
 app! {
     device: stm32f7x,
@@ -61,18 +60,16 @@ app! {
     },
 }
 
-
-fn init(mut p: init::Peripherals)  -> init::LateResources  {
-
+fn init(mut p: init::Peripherals) -> init::LateResources {
     let mut rcc = p.device.RCC.constrain();
 
     //Serial USART 6 config
-    let mut gpioc = p.device.GPIOC.split(&mut rcc.ahb);
+    let mut gpiog = p.device.GPIOG.split(&mut rcc.ahb);
     //Flash device needed by the RCC cfgr register configuration init. No link with serial use.
     let mut flash = p.device.FLASH.constrain();
     let clocks = rcc.cfgr.freeze(&mut flash.acr);
-    let tx = gpioc.pc6.into_af7(&mut gpioc.moder, &mut gpioc.afrl);
-    let rx = gpioc.pc7.into_af7(&mut gpioc.moder, &mut gpioc.afrl);
+    let tx = gpiog.pg14.into_af7(&mut gpiog.moder, &mut gpiog.afrh);
+    let rx = gpiog.pg9.into_af7(&mut gpiog.moder, &mut gpiog.afrh);
 
     let mut serial = Serial::usart6(
         p.device.USART6,
@@ -83,7 +80,6 @@ fn init(mut p: init::Peripherals)  -> init::LateResources  {
     );
     serial.listen(Event::Rxne);
     let (tx, rx) = serial.split();
-
 
     //LED Gpio config.
     let mut gpiob = p.device.GPIOB.split(&mut rcc.ahb);
@@ -97,7 +93,7 @@ fn init(mut p: init::Peripherals)  -> init::LateResources  {
     p.core.SYST.set_clock_source(SystClkSource::Core);
     p.core.SYST.set_reload(16_000_000); // 1s
     p.core.SYST.enable_interrupt();
-    p.core.SYST.enable_counter(); 
+    p.core.SYST.enable_counter();
 
     init::LateResources {
         ON: false,
@@ -114,10 +110,11 @@ fn idle() -> ! {
 }
 
 // Rx USART6 exeption handle.
-// do serial echo 
+// do serial echo
 fn echo(_: &mut Threshold, mut r: USART6::Resources) {
-    let byte = r.RX.read().unwrap();
-    r.TX.write(byte).unwrap();
+    let i = 0;
+    //let byte = r.RX.read().unwrap();
+    //    r.TX.write(byte).unwrap();
 }
 
 // This is the task handler of the SYS_TICK exception
